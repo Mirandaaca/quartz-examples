@@ -24,6 +24,6 @@ public class QuartzSchedulerService {
                 .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
-        return "✅ Job programado con éxito. Se ejecutará cada " + intervalInSeconds + " segundos.";
+        return "El job ejecutará cada " + intervalInSeconds + " segundos.";
     }
 }
