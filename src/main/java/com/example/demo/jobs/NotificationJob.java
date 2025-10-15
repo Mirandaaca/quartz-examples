@@ -14,6 +14,6 @@ public class NotificationJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String message = (String) context.getJobDetail().getJobDataMap().get("message");
-        logger.info("📢 Notificación: {} - Ejecutada en {}", message, LocalDateTime.now());
+        logger.info("Notificación: {} - Ejecutada en {}", message, LocalDateTime.now());
     }
 }
