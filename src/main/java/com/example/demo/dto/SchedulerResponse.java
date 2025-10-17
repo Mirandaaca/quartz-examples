@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SchedulerResponse {
+    private String jobId;
     private String jobName;
     private String jobGroup;
     private String message;

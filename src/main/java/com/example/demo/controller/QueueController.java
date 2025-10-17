@@ -5,7 +5,6 @@ import com.example.demo.dto.SchedulerResponse;
 import com.example.demo.entity.Client;
 import com.example.demo.entity.Queue;
 import com.example.demo.repository.ClientRepository;
-import com.example.demo.repository.QueueRepository;
 import com.example.demo.service.NotificationService;
 import com.example.demo.service.QueueService;
 import com.example.demo.service.SchedulerService;
@@ -27,9 +26,7 @@ public class QueueController {
     private final QueueService queueService;
     private final SchedulerService schedulerService;
     private final NotificationService notificationService;
-    private final QueueRepository queueRepository;
     private final ClientRepository clientRepository;
-
 
     @GetMapping
     public ResponseEntity<List<Queue>> getAllQueues() {
@@ -62,7 +59,6 @@ public class QueueController {
             return ResponseEntity.badRequest().build();
         }
 
-        // Get current position
         List<Client> currentClients = clientRepository
                 .findByQueueIdAndStatus(queueId, Client.ClientStatus.WAITING);
         int position = currentClients.size() + 1;
@@ -78,7 +74,6 @@ public class QueueController {
                 .build();
 
         client = clientRepository.save(client);
-
         notificationService.notifySuccessJoinQueue(client);
 
         log.info("Client {} joined queue {} at position {}", name, queue.getName(), position);
@@ -86,6 +81,10 @@ public class QueueController {
         return ResponseEntity.ok(client);
     }
 
+    /**
+     * UC11: Postpone client - JobRunr version
+     * Much simpler than Quartz!
+     */
     @PostMapping("/postpone")
     public ResponseEntity<SchedulerResponse> postponeClient(
             @Valid @RequestBody PostponeClientRequest request) {
@@ -93,7 +92,6 @@ public class QueueController {
         Client client = clientRepository.findById(request.getClientId())
                 .orElseThrow(() -> new RuntimeException("Client not found"));
 
-        // Update client status
         client.setStatus(Client.ClientStatus.POSTPONED);
         client.setPostponedAt(LocalDateTime.now());
         client.setPostponeMinutes(request.getPostponeMinutes());
@@ -115,7 +113,6 @@ public class QueueController {
             return ResponseEntity.notFound().build();
         }
 
-        // Get next client (first in line)
         Client nextClient = waitingClients.get(0);
         nextClient.setStatus(Client.ClientStatus.ATTENDING);
         nextClient = clientRepository.save(nextClient);
